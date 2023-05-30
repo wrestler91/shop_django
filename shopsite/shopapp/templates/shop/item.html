@@ -1,0 +1,11 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<h1>{{item.title}}</h1>
+<p>{{description|linebreaks}}</p>
+{% if item.photos.all %}
+    {% for photo in item.photos.all %}
+        <li><img class="img-article-left thumb" src="{{ photo.photo.url }}" alt="photo"></li>
+    {% endfor %}
+{% endif %}
+{% endblock %}
