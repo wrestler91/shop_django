@@ -7,9 +7,12 @@ urlpatterns = [
     path('item/<slug:item_slug>', ShowItem.as_view(), name='item'),
     path('category/<slug:categ_slug>/', Categories.as_view(), name ='category'),
     path('request/', RequestItem.as_view(), name='request'),
+    path('additem/', AddItem.as_view(), name='add_item'),
     path('about/', about, name='about'),
     path('contact/', contact, name='contact'),
     path('login/', login, name='login'),
+    path('logout/', login, name='logout'),
+    path('register/', register, name='register'),
 ]
 
 

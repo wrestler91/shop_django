@@ -13,15 +13,31 @@
 <body>
 <table class="table-page" border=0 cellpadding="0" cellspacing="0">
 <tr><td valign=top>
+
+    <!-- добавить функционал добавления товара, так чтобы кнопка была видна только работникам и администратору -->
 {% block mainmenu %}
-<div class="header">
-    <ul id="mainmenu" class="mainmenu">
-    <li class="logo"><a href="{% url 'home' %}"><div class="logo"></div></a></li>
-<ul>
-    {% for m in menu %}
-        <li><a href="{% url m.url_name %}">{{m.title}}</a></li>
-    {% endfor %}
-</ul>
+    <div class="header">
+        <ul id="mainmenu" class="mainmenu">
+        <li class="logo"><a href="{% url 'home' %}"><div class="logo"></div></a></li>
+
+        {% for m in menu %}
+            <li><a href="{% url m.url_name %}">{{m.title}}</a></li>
+        {% endfor %}
+
+        {% if request.user.is_staff %}
+            <li><a href="{% url 'add_item' %}">Добавить товар</a></li>
+        {% endif %}
+
+        {% if request.user.is_authenticated %}
+            <li class="last"> {{user.username}} | <a href="{% url 'logout' %}">Выйти</a></li>
+        {% else %}
+            <li class="last"><a href="{% url 'register' %}">Регистрация</a> | <a href="{% url 'login' %}">Войти</a></li>
+        {% endif %}
+
+
+        </ul>
+        <div class="clear"></div>
+	</div>
 {% endblock mainmenu %}
 
 
@@ -37,14 +53,8 @@
             <li><a href="{% url 'home' %}">Новые поступления</a></li>
         {% endif %}
     
-    <!-- {% show_categories cat_selected=cat_selected %} -->
-    {% for c in categories %}
-        {% if c.pk == cat_selected %}
-                <li class="selected">{{c.name}}</li>
-        {% else %}
-                <li><a href="{{ c.get_absolute_url }}">{{c.name}}</a></li>
-        {% endif %}
-    {% endfor %}
+    {% show_categories cat_selected=cat_selected %}
+    
     
         <li class="share">
 		<p>Наш канал</p>
@@ -55,9 +65,7 @@
 <!-- Конец Sidebar'а -->
 
 <td valign="top" class="content">
-	<!-- Хлебные крошки -->
-	{% block breadcrumbs %}
-	{% endblock %}
+
 
 {% block content %}
 {% endblock %}
