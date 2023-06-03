@@ -16,7 +16,11 @@ class Item(models.Model):
     time_update = models.DateTimeField(auto_now=True, verbose_name='Время последнего обновления')
     categ = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория', related_name='categ')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
-    # photos = models.ForeignKey('ItemPhoto', on_delete=models.DO_NOTHING, verbose_name='Фото')
+    # photo1 = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото 1')
+    # photo2 = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото 2', blank=True)
+    # photo3 = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото 3', blank=True)
+    
+
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
@@ -46,8 +50,9 @@ class Category(models.Model):
 # в шаблонах поменять ссылку на фото (сейчас там ссылка на атрибут класса Item)
 class ItemPhoto(models.Model):
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото')
+    # photo2 = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото 2')
     item = models.ForeignKey(Item, on_delete=models.DO_NOTHING, verbose_name='Товар', related_name='photos')
-
+    # related_name='photos' используется для обращения к этому полю через класс Item (for photo in item.photos)
     class Meta:
         verbose_name = 'Фото'
         verbose_name_plural = 'Фотографии'
@@ -55,8 +60,8 @@ class ItemPhoto(models.Model):
     def __str__(self):
         return self.item.title
     
-    # def get_absolute_url(self):
-    #     return reverse('photo', kwargs={'photo_slug': self.slug})
+    def get_absolute_url(self):
+        return reverse('photo', kwargs={'photo_pk': self.pk})
 
 # представление для формы запроса товара
 # необходимо привязать форму к пользователю

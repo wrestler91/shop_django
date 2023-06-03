@@ -6,7 +6,7 @@ from .models import *
 from datetime import datetime, timedelta
 from .utils import *
 from .form import *
-
+from django.urls import reverse_lazy
 
 
 
@@ -74,6 +74,8 @@ class AddItem(DataMixin, CreateView):
     form_class = AddItemForm
     form_photos_class = AddPhotoForm
     model = Item
+    raise_exception = True
+    # success_url = reverse_lazy('home')
 
     def get(self, request):
         form = self.form_class()
@@ -81,11 +83,22 @@ class AddItem(DataMixin, CreateView):
         return render(request, self.template_name, {'form': form, 'form_photos': form_photos})
     
     def post(self, request):
+    
+        # print('From AddItem (view)', request.FILES)
         form = self.form_class(request.POST)
-        form_photos = self.form_photos_class(request.POST, request.FILES, request=request)
-        if form.is_valid() and form_photos.is_valid():
+        # form_photos = self.form_photos_class(request.POST, request.FILES, request=request)
+        form_photos = self.form_photos_class(request.POST, request.FILES)
+        # if form.is_valid() and form_photos.is_valid():
+        if form.is_valid():
+            
+            # form.save()
+            # form_photos.save()
             item = form.save()
-            form_photos.save_for(item)
+            # form_photos.save_for(item)
+            for photo in self.request.FILES.getlist('photos'):
+                print(self.request.FILES.getlist('photos'))
+                # if 'photo' in photo.content_type:
+                ItemPhoto(photo=photo, item=item).save()
             return HttpResponseRedirect('/')
         return render(request, self.template_name, {'form': form, 'form_photos': form_photos})
 
