@@ -11,6 +11,7 @@
     <div class="form-error">{{ f.errors }}</div>
     {% endfor %}
     <button type="submit">Подтвердить</button>
+    <p class="link-read-post"><a href="{% url change_password.url_name %}">{{change_password.title}}</a></p>
 </form>
  
 {% endblock %}

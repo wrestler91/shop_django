@@ -50,7 +50,7 @@ class Category(models.Model):
 class ItemPhoto(models.Model):
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото')
     # photo2 = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото 2')
-    item = models.ForeignKey(Item, on_delete=models.DO_NOTHING, verbose_name='Товар', related_name='photos')
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, verbose_name='Товар', related_name='photos')
     # related_name='photos' используется для обращения к этому полю через класс Item (for photo in item.photos)
     class Meta:
         verbose_name = 'Фото'

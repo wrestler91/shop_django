@@ -10,8 +10,7 @@ from datetime import datetime, timedelta
 from .utils import *
 from .form import *
 from django.urls import reverse_lazy
-
-
+from django.contrib.auth.views import PasswordChangeView
 
 class Home(DataMixin, ListView):
     model = Item
@@ -54,7 +53,7 @@ class ShowItem(DataMixin, DetailView):
     
     def get_context_data(self, **kwargs) -> dict:
         '''
-        Переопределяем контектс, для добавления в него элементов для главного и бокового меню из класса DataMixin
+        Переопределяем контекст, для добавления в него элементов для главного и бокового меню из класса DataMixin
         А так же добавляем вычисляемое значение price_with_discount 
         '''
         cont = super().get_context_data(**kwargs)
@@ -150,14 +149,18 @@ class LoginUser(DataMixin, LoginView):
         return reverse_lazy('home')
 
 class ProfileEditView(DataMixin, LoginRequiredMixin, UpdateView):
+    '''
+    Представление отображает форму для изменения данных пользователя
+    '''
     model = User
     form_class = ProfileEditForm
     template_name = 'shop/edit_profile.html'
-    # success_url = '/home/'
-
+    
+    change_password = {'title': "Изменение пароля", 'url_name': 'password'}
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Редактирование профиля")
+        context['change_password'] = self.change_password
         return {**context, **c_def}
     
     def get_object(self, queryset=None):
@@ -171,6 +174,9 @@ def logout_user(request):
     return redirect('login')
 
 class ProfileView(DataMixin, LoginRequiredMixin, DetailView):
+    '''
+    Отображает профиль пользователя
+    '''
     model = User
     template_name = 'shop/profile.html'
     context_object_name = 'profile'
@@ -187,8 +193,19 @@ class ProfileView(DataMixin, LoginRequiredMixin, DetailView):
         return self.request.user
 
 
-def profile(request):
-    return HttpResponse('<h1>profile</h1>')
+class ChangePasswordView(DataMixin, LoginRequiredMixin, PasswordChangeView):
+    '''
+    Для формы изменения пароля
+    '''
+    form_class = ChangePasswordForm
+    success_url = reverse_lazy('profile')
+    template_name = 'shop/password.html'
+    
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title="Изменение пароля")
+        return {**context, **c_def}
+
 
 
 def about(request):

@@ -1,11 +1,10 @@
 from django import forms
-from django.forms.widgets import FileInput
 from .models import *
 from django.contrib.auth.models import User
-from .utils import MultipleFileField
-from multiupload.fields import MultiFileField, MultiImageField
+from multiupload.fields import MultiImageField
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm
 
 class RequestItemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -16,8 +15,9 @@ class RequestItemForm(forms.ModelForm):
         model = RequestedItem
         fields = ['title', 'size', 'url', 'count', 'comments', 'photo',  'categ']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-input'}),
-            'comments': forms.Textarea(attrs={'cols': 60, 'rows': 10}),
+            'title': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Название бренда и модель'}),
+            'comments': forms.Textarea(attrs={'cols': 60, 'rows': 10,}),
+            'url': forms.TextInput(attrs={'size': 70, 'placeholder': 'Введите ссылку на товар'}),
         }
 
 
@@ -92,4 +92,11 @@ class LoginUserForm(AuthenticationForm):
 class ProfileEditForm(UserChangeForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'password']
+        fields = ['first_name', 'last_name', 'username', 'email']
+
+class ChangePasswordForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['old_password'].widget = forms.PasswordInput(attrs={'class': 'form-input', 'label': 'Старый пароль'})
+        self.fields['new_password1'].widget = forms.PasswordInput(attrs={'class': 'form-input', 'label': 'Новый пароль'})
+        self.fields['new_password2'].widget = forms.PasswordInput(attrs={'class': 'form-input', 'label': 'Подтверждение пароля'})

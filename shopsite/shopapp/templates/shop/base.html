@@ -26,6 +26,8 @@
 
         {% if request.user.is_staff %}
             <li><a href="{% url 'add_item' %}">Добавить товар</a></li>
+        {% elif request.user.is_authenticated and not request.user.is_staff %}
+            <li><a href="{% url 'request' %}">Оставить заявку на товар</a></li>
         {% endif %}
 
         {% if request.user.is_authenticated %}
