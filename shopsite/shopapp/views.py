@@ -3,13 +3,13 @@ from django.views.generic import DetailView, ListView, CreateView
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.views.generic.edit import UpdateView
 from django.contrib.auth import login, logout
 from .models import *
 from datetime import datetime, timedelta
 from .utils import *
 from .form import *
 from django.urls import reverse_lazy
-
 
 
 
@@ -43,7 +43,7 @@ class Categories(DataMixin, ListView):
     def get_queryset(self):
         return Item.objects.filter(categ__slug=self.kwargs['categ_slug']).select_related('categ')
         
-    
+
 
 class ShowItem(DataMixin, DetailView):
     model = Item
@@ -62,7 +62,6 @@ class ShowItem(DataMixin, DetailView):
         item.price_with_discount = item.price - (item.price * (item.discount/100))
         cont['price_with_discount'] = item.price_with_discount
         c_def = self.get_user_context(title=cont['item'])
-        print('c_def', c_def)
         return {**cont, **c_def}
 
    
@@ -77,8 +76,7 @@ class RequestItem(LoginRequiredMixin, DataMixin, CreateView):
     def get_context_data(self, **kwargs) -> dict:
         cont = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title='Запрос товара')
-        context = dict(list(cont.items()) + list(c_def.items()))
-        return context
+        return {**cont, **c_def}
 
 class AddItem(DataMixin, CreateView):
     template_name = 'shop/additem.html'
@@ -115,18 +113,17 @@ class AddItem(DataMixin, CreateView):
     def get_context_data(self, **kwargs) -> dict:
         cont = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title='Добавление товара')
-        context = dict(list(cont.items()) + list(c_def.items()))
-        return context
+        return {**cont, **c_def}
 
 class RegisterUser(DataMixin, CreateView):
     form_class = RegisterUserForm
-    template_name = 'women/register.html'
+    template_name = 'shop/register.html'
     success_url = reverse_lazy('login')
  
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Регистрация")
-        return dict(list(context.items()) + list(c_def.items()))
+        return {**context, **c_def}
     
     def form_valid(self, form):
         '''
@@ -142,15 +139,56 @@ class RegisterUser(DataMixin, CreateView):
 
 class LoginUser(DataMixin, LoginView):
     form_class = LoginUserForm
-    template_name = 'women/login.html'
+    template_name = 'shop/login.html'
  
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Авторизация")
-        return dict(list(context.items()) + list(c_def.items()))
+        return {**context, **c_def}
 
     def get_success_url(self):
         return reverse_lazy('home')
+
+class ProfileEditView(DataMixin, LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = ProfileEditForm
+    template_name = 'shop/edit_profile.html'
+    # success_url = '/home/'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title="Редактирование профиля")
+        return {**context, **c_def}
+    
+    def get_object(self, queryset=None):
+        return self.request.user
+    
+    def get_success_url(self):
+        return reverse_lazy('profile')
+
+def logout_user(request):
+    logout(request)
+    return redirect('login')
+
+class ProfileView(DataMixin, LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'shop/profile.html'
+    context_object_name = 'profile'
+    edit = {'title': "Редактирование профиля", 'url_name': 'edit_profile'}
+
+    def get_context_data(self, **kwargs) -> dict:
+        cont = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Просмотр профиля')
+        cont['edit'] = self.edit
+        return {**cont, **c_def}
+    
+    
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+def profile(request):
+    return HttpResponse('<h1>profile</h1>')
 
 
 def about(request):
@@ -160,9 +198,7 @@ def contact(request):
     return HttpResponse('<h1>contact</h1>')
 
 
-def logout_user(request):
-    logout(request)
-    return redirect('login')
+
 
 def register(request):
     return HttpResponse('<h1>login</h1>')

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from .utils import MultipleFileField
 from multiupload.fields import MultiFileField, MultiImageField
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 class RequestItemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -74,7 +75,7 @@ class AddPhotoForm(forms.Form):
         # for photo in self.cleaned_data['photos']:
         #     ItemPhoto(photo=photo, item=item).save()
 
-class RegisterUserForm(forms.UserCreationForm):
+class RegisterUserForm(UserCreationForm):
     first_name = forms.CharField(label='Имя', widget=forms.TextInput(attrs={'class': 'form-input'}))
     username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
     password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
@@ -88,3 +89,7 @@ class LoginUserForm(AuthenticationForm):
     username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
 
+class ProfileEditForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email', 'password']
