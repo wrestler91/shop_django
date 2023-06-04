@@ -14,11 +14,10 @@ class Item(models.Model):
     discount = models.FloatField(validators= [validators.MinValueValidator(0)], default=0, verbose_name='Скидка')
     available = models.BooleanField(default=True, verbose_name='Наличие')
     time_update = models.DateTimeField(auto_now=True, verbose_name='Время последнего обновления')
-    categ = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория', related_name='categ')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
-    # photo1 = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото 1')
-    # photo2 = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото 2', blank=True)
-    # photo3 = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото 3', blank=True)
+    categ = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория', related_name='categ')
+    
+
     
 
     class Meta:

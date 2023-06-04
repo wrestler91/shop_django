@@ -10,9 +10,9 @@ urlpatterns = [
     path('additem/', AddItem.as_view(), name='add_item'),
     path('about/', about, name='about'),
     path('contact/', contact, name='contact'),
-    path('login/', login, name='login'),
-    path('logout/', login, name='logout'),
-    path('register/', register, name='register'),
+    path('login/', LoginUser.as_view(), name='login'),
+    path('logout/', logout_user, name='logout'),
+    path('register/', RegisterUser.as_view(), name='register'),
 ]
 
 

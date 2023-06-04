@@ -14,8 +14,9 @@
             <p><img class="img-article-left thumb" src="{{ item.photos.first.photo.url }}" alt="photo"></p>
         {% endif %}
         <!-- проверяем есть ли вообще фото обращаясь к внешнему ключу photo класса ItemPhoto через relatede_name photos -->
-        
+        <p>Размеры: {{item.size}}</p>
         <p>{{item.description|linebreaks|truncatewords:50}}</p>
+        
             <div class="clear"></div>
             <p class="link-read-post"><a href="{{ item.get_absolute_url }}">Подробнее</a></p>
 

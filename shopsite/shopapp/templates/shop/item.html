@@ -2,19 +2,22 @@
 
 {% block content %}
 <h1>{{item.title}}</h1>
-<p>{{description|linebreaks}}</p>
-{% if item.photo2 %}
-    <!-- выводим первое фото из списка -->
-    <li><img class="img-article-left thumb" src="{{ item.photo2.url }}" alt="photo"></li>
-{% endif %}
-{% if item.photo3 %}
-    <!-- выводим первое фото из списка -->
-    <li><img class="img-article-left thumb" src="{{ item.photo3.url }}" alt="photo"></li>
-{% endif %}
-
 {% if item.photos.all %}
     {% for photo in item.photos.all %}
-        <li><img class="img-article-left thumb" src="{{ photo.photo.url }}" alt="photo"></li>
+        <p><img class="img-article-left thumb" src="{{ photo.photo.url }}" alt="photo"></p>
     {% endfor %}
 {% endif %}
+
+
+<p>Размеры: {{item.size}}</p>
+<p>Доступное количество: {{item.count}}</p>
+<p>Цена: {{item.price}} $</p>
+
+{% if item.discount %}
+    <p>Скидка: {{item.discount}} %</p>
+    <p>Цена со скидкой: {{ item.price_with_discount|floatformat }}</p>
+{% endif %}
+
+<p>Описание: {{item.description|linebreaks}}</p>
+<p>Дата добавления товара: {{item.time_update|date:"d-m-Y"}}</p>
 {% endblock %}

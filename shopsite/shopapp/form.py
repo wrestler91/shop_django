@@ -4,7 +4,7 @@ from .models import *
 from django.contrib.auth.models import User
 from .utils import MultipleFileField
 from multiupload.fields import MultiFileField, MultiImageField
-
+from django.contrib.auth.forms import AuthenticationForm
 
 class RequestItemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -50,8 +50,8 @@ class AddPhotoForm(forms.Form):
     #     Извлекает из запроса self.request список файлов и берет только те эллементы которые являются изображениями.
     #     Затем проверяет есть ли в списке хоть 1 файл, если нет то вызывает исключение, а иначе возвращает список загруженных изображений 
     #     '''
-    #     # print('from AddPhotoForm', self.request.FILES.getlist('photos'))
-    #     # Остаются только картинки
+        # print('from AddPhotoForm', self.request.FILES.getlist('photos'))
+        # Остаются только картинки
     #     photos = [photo for photo in self.request.FILES.getlist('photos') if 'photo' in photo.content_type]
     #     # photos = [photo for photo in self.photos]
     #     # Если среди загруженных файлов картинок нет, то исключение
@@ -59,10 +59,32 @@ class AddPhotoForm(forms.Form):
     #         raise forms.ValidationError(u'Not found uploaded photos')
     #     return photos
 
-    def save_for(self, item):
-        '''
-        Метод сохраняет фотографии в модель ItemPhoto проходя по спику циклом.
-        '''
-        for photo in self.cleaned_data['photos']:
-            ItemPhoto(photo=photo, item=item).save()
+    # def save_for(self, photos, item):
+    #     '''
+    #     Метод сохраняет фотографии в модель ItemPhoto проходя по спику циклом.
+    #     '''
+    #     for photo in photos:
+    #         file_type = magic.from_buffer(photo.read(), mime=True)
+    #         if not file_type.startswith('image'):
+    #             raise forms.ValidationError('Недопустимый тип файла. Пожалуйста, загрузите только изображения.')
+    #     else:
+    #         for photo in photos:
+    #             ItemPhoto(photo=photo, item=item).save()
+
+        # for photo in self.cleaned_data['photos']:
+        #     ItemPhoto(photo=photo, item=item).save()
+
+class RegisterUserForm(forms.UserCreationForm):
+    first_name = forms.CharField(label='Имя', widget=forms.TextInput(attrs={'class': 'form-input'}))
+    username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
+    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
+    password2 = forms.CharField(label='Повтор пароля', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-input'}))
+    class Meta:
+        model = User
+        fields = ('first_name', 'username', 'password1', 'password2', 'email')
+
+class LoginUserForm(AuthenticationForm):
+    username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
+    password = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
 
