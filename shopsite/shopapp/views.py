@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.views.generic import DetailView, ListView, CreateView
+from django.views.generic import DetailView, ListView, CreateView, TemplateView
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
@@ -208,17 +208,25 @@ class ChangePasswordView(DataMixin, LoginRequiredMixin, PasswordChangeView):
 
 
 
-def about(request):
-    return HttpResponse('<h1>about</h1>')
+class AboutView(TemplateView):
+    
+    template_name = 'shop/about.html'
+    
+    menu = [
+        {'title': "Обратная связь", 'url_name': 'contact'},
+        ]
+    
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_menu = menu.copy()
+        context['menu'] = user_menu
+        context['title'] = 'О нас'
+        return context
 
 def contact(request):
     return HttpResponse('<h1>contact</h1>')
 
 
-
-
-def register(request):
-    return HttpResponse('<h1>login</h1>')
 
 def pageNotFound(request, exception):
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')

@@ -1,15 +1,37 @@
 from .models import *
 from django.core.cache import cache
 from django import forms
+import requests
+
+
 
 menu = [{'title': "О сайте", 'url_name': 'about'},
-        {'title': "Обратная связь", 'url_name': 'contact'},
+        # {'title': "Обратная связь", 'url_name': 'contact'},
         ]
+API_NASDAQ = '_RQPjdq7WzFumRdf1Tjw'
 
+# def get_currency_rate(api_key):
+#     url = 'https://api.nasdaq.com/api/forex/rates'
+#     headers = {
+#         'Authorization': f'Bearer {api_key}',
+#     }
+#     params = {
+#         'base': 'USD',
+#         'symbol': 'RUB',
+#     }
+#     response = requests.get(url, headers=headers, params=params)
+
+#     if response.status_code == 200:
+#         data = response.json()
+#         rate = data['data']['lastSalePrice']
+#         return rate
+#     else:
+#         return None
 
 
 class DataMixin:
     paginate_by = 5
+
     def get_user_context(self, **kwargs):
         context = kwargs
         categories = cache.get('categories')
@@ -22,6 +44,8 @@ class DataMixin:
  
         context['menu'] = user_menu
         context['categories'] = categories
+        
+
         if 'cat_selected' not in context:
             context['cat_selected'] = 0
         return context
@@ -51,3 +75,6 @@ class MultipleFileField(forms.FileField):
         else:
             result = single_file_clean(data, initial)
         return result
+
+
+

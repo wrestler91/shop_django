@@ -28,3 +28,9 @@
     </ul>
 </nav>
 {% endif %}
+
+		{% if cat_selected == 0 %}
+            <li class="selected">Новые поступления</li>
+        {% else %}
+			<li><a href="{% url 'home' %}">Новые поступления</a></li>
+        {% endif %}

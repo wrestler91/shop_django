@@ -23,6 +23,7 @@ from shopapp.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('shopapp.urls')),
+    path('captcha/', include('captcha.urls')),
 ]
 
 from django.conf.urls.static import static

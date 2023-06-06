@@ -5,8 +5,8 @@
     {% for item in items %}
     <li> 
         <div class="article-panel">
-        <p class="first">Категория: {{item.categ}}</p>
-        <p class="last">Дата: {{item.time_update|date:"d-m-Y H:i:s"}}</p>
+        
+        <p class="last">Дата добавления: {{item.time_update|date:"d-m-Y H:i:s"}}</p>
         </div>
 
         <h2>{{item.title}}</h2>
@@ -15,6 +15,7 @@
             <li><img class="img-article-left thumb" src="{{ item.photos.first.photo.url }}" alt="photo"></li>
             
         {% endif %}
+        <p>Размеры: {{item.size}}</p>
         <p>{{item.description|linebreaks|truncatewords:50}}</p>
             <div class="clear"></div>
             <p class="link-read-post"><a href="{{ item.get_absolute_url }}">Подробнее</a></p>

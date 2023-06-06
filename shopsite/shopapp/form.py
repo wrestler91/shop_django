@@ -5,6 +5,7 @@ from multiupload.fields import MultiImageField
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.forms import PasswordChangeForm
+from captcha.fields import CaptchaField
 
 class RequestItemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -81,6 +82,7 @@ class RegisterUserForm(UserCreationForm):
     password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
     password2 = forms.CharField(label='Повтор пароля', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
     email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-input'}))
+    captcha = CaptchaField()
     class Meta:
         model = User
         fields = ('first_name', 'username', 'password1', 'password2', 'email')

@@ -17,8 +17,7 @@ def show_categories(sort=None, cat_selected=0):
 @register.inclusion_tag('shop/include_tags/list_menu.html')
 def show_menu():
     menu = [{'title': "О сайте", 'url_name': 'about'},
-        {'title': "Добавить статью", 'url_name': 'add_page'},
         {'title': "Обратная связь", 'url_name': 'contact'},
-        {'title': "Войти", 'url_name': 'login'}
+       
         ]
     return {'menu': menu,}
