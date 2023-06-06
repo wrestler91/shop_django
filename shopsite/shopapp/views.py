@@ -11,6 +11,7 @@ from .utils import *
 from .form import *
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordChangeView
+from favorites.views import add_to_favorites, remove_from_favorites, delete_favorites
 
 class Home(DataMixin, ListView):
     model = Item
@@ -57,9 +58,17 @@ class ShowItem(DataMixin, DetailView):
         А так же добавляем вычисляемое значение price_with_discount 
         '''
         cont = super().get_context_data(**kwargs)
+        # в контектс добавляем вычисляеое значение цены со скидкой
         item = cont['item']
         item.price_with_discount = item.price - (item.price * (item.discount/100))
         cont['price_with_discount'] = item.price_with_discount
+
+        # проверка, добавлен ли продукт в избранное для вывода нужной кнопки меню
+        is_notfavorite = {'id': str(item.id)} not in self.request.session.get('favorites', [])
+        # print('session:', self.request.session.get('favorites', []))
+        # print('is_notfavorite:', is_notfavorite)
+        
+        cont['is_notfavorite'] = is_notfavorite
         c_def = self.get_user_context(title=cont['item'])
         return {**cont, **c_def}
 

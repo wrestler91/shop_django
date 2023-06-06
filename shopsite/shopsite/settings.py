@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shopapp.apps.ShopappConfig',
     'captcha',
+    
+    'favorites.apps.FavoritesConfig',
 ]
 
 MIDDLEWARE = [

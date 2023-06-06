@@ -37,7 +37,7 @@ class DataMixin:
         categories = cache.get('categories')
         if not categories:
             categories = Category.objects.all()
-            cache.set('categories', categories, 60)
+            cache.set('categories', categories, 1)
         user_menu = menu.copy()
         if not self.request.user.is_authenticated:
             user_menu.pop()

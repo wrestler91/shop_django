@@ -20,4 +20,27 @@
 
 <p>Описание: {{item.description|linebreaks}}</p>
 <p>Дата добавления товара: {{item.time_update|date:"d-m-Y"}}</p>
+
+<!-- Функционал добавления в избранное -->
+<!-- если товар еще не добавлен в избранное то отображаем кнопку добавления -->
+    {% if is_notfavorite %}
+    <form action="{% url 'favorites:add' id=item.id %}" method="POST"> {% csrf_token %}
+    <!-- конструкция favorites:add добавляет пространство имен favorites, которе было определено в юрлах приложения favorites
+    app_name ='favorites', таким образом получаем доступ к функции add_to_favorites имя 
+    которой в юрлах указанно как name = 'add'
+    запись id=item.id передает в функцию представления аргумент id-->
+        <!-- сркытно передаем id товара и путь откуда был добавлен товар -->
+        <input type="hidden" name="id" value="{{ item.id }}">
+        <input type="hidden" name="url_from" value="{{ request.path }}">
+        <button type="submit" class="link-read-post">Добавить в избранное</button>
+    </form>
+<!-- если товар уже добавлен в избранное, то отображаем кнопку удаления из избранного -->
+    {% else %}
+    <form action="{% url 'favorites:remove' id=item.id %}" method="POST"> {% csrf_token %}
+        <input type="hidden" name="id" value="{{ item.id }}">
+        <input type="hidden" name="url_from" value="{{ request.path }}">
+        <button type="submit" class="link-read-post">Удалить из избранного</button>
+    </form>
+    {% endif %}
+
 {% endblock %}

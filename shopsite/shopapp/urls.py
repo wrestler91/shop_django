@@ -4,8 +4,8 @@ from django.views.decorators.cache import cache_page
 
 # добавить адреса для представлений форм 
 urlpatterns = [
-    path('', Home.as_view(), name='home'), # соответсвует маршруту http://127.0.0.1:8000/women/
-    path('item/<slug:item_slug>', cache_page(120)(ShowItem.as_view()), name='item'),
+    path('', Home.as_view(), name='home'), # соответсвует маршруту http://127.0.0.1:8000/
+    path('item/<slug:item_slug>', ShowItem.as_view(), name='item'),
     # path('profile/<slug:username>/', ProfileView.as_view(), name='profile'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('category/<slug:categ_slug>/', cache_page(120)(Categories.as_view()), name ='category'),
