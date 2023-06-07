@@ -1,26 +1,25 @@
 {% extends 'shop/base.html' %}
 
+
 {% block content %}
+
 <ul class="list-articles">
     {% for item in items %}
     <li> 
         <div class="article-panel">
-        
         <p class="last">Дата добавления: {{item.time_update|date:"d-m-Y H:i:s"}}</p>
         </div>
 
         <h2>{{item.title}}</h2>
         {% if item.photos.all %}
-            
-            <li><img class="img-article-left thumb" src="{{ item.photos.first.photo.url }}" alt="photo"></li>
-            
+            <p><img class="img-article-left thumb" src="{{ item.photos.first.photo.url }}" alt="photo"></p>
         {% endif %}
         <p>Размеры: {{item.size}}</p>
         <p>{{item.description|linebreaks|truncatewords:50}}</p>
             <div class="clear"></div>
             <p class="link-read-post"><a href="{{ item.get_absolute_url }}">Подробнее</a></p>
-
     </li>
     {% endfor %}
 </ul>
+
 {% endblock %}

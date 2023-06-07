@@ -8,7 +8,7 @@ urlpatterns = [
     path('item/<slug:item_slug>', ShowItem.as_view(), name='item'),
     # path('profile/<slug:username>/', ProfileView.as_view(), name='profile'),
     path('profile/', ProfileView.as_view(), name='profile'),
-    path('category/<slug:categ_slug>/', cache_page(120)(Categories.as_view()), name ='category'),
+    path('category/<slug:categ_slug>/', cache_page(60)(Categories.as_view()), name ='category'),
     path('request/', RequestItem.as_view(), name='request'),
     path('additem/', AddItem.as_view(), name='add_item'),
     path('contact/', contact, name='contact'),
@@ -18,6 +18,7 @@ urlpatterns = [
     path('edit_profile/', ProfileEditView.as_view(), name='edit_profile'),
     path('password/', ChangePasswordView.as_view(), name='password'),
     path('about/', cache_page(6000)(AboutView.as_view()), name='about'),
+    path('favorite_list/', FavoriteLiist.as_view(), name='favor_list'),
 ]
 
 

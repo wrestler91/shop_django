@@ -11,11 +11,12 @@ from .utils import *
 from .form import *
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordChangeView
-from favorites.views import add_to_favorites, remove_from_favorites, delete_favorites
+from django.db.models import OuterRef, Subquery, ImageField, Case, When
+
 
 class Home(DataMixin, ListView):
     model = Item
-    template_name = 'shop/home.html'
+    template_name = 'shop/index.html'
     context_object_name = 'items'
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -26,7 +27,7 @@ class Home(DataMixin, ListView):
     def get_queryset(self):
         # здесь прописать фильтр который будет выводит  товары добавленные за последний месяц
         last_month = datetime.now() - timedelta(days=30)
-        return Item.objects.filter(time_update__gte=last_month).select_related('categ')
+        return Item.objects.filter(time_update__gte=last_month).prefetch_related('photos').select_related('categ')
         
 
 class Categories(DataMixin, ListView):
@@ -41,10 +42,18 @@ class Categories(DataMixin, ListView):
         return {**cont, **c_def}
     
     def get_queryset(self):
-        return Item.objects.filter(categ__slug=self.kwargs['categ_slug']).select_related('categ')
+        return Item.objects.filter(categ__slug=self.kwargs['categ_slug']).prefetch_related('photos', 'photos__item').select_related('categ')
         
-
-
+        # ниже была попытка оптимизировать запросы, чтобы получить первые фото товаров сразу, а не в цикле шаблона.
+        # item_ids = Item.objects.filter(categ__slug=self.kwargs['categ_slug']).values_list('id', flat=True)
+        # item_photos_subquery = ItemPhoto.objects.filter(item_id__in=item_ids).order_by('item_id', 'id').values('item_id', 'photo')
+        # subquery_dict = {}
+        # for item_id, photo in item_photos_subquery:
+        #     if item_id not in subquery_dict:
+        #         subquery_dict[item_id] = photo
+        # queryset = Item.objects.filter(categ__slug=self.kwargs['categ_slug']).annotate(first_photo=Subquery(subquery_dict.values(), output_field=models.ImageField()))
+        # return queryset
+    
 class ShowItem(DataMixin, DetailView):
     model = Item
     template_name = 'shop/item.html'
@@ -231,6 +240,30 @@ class AboutView(TemplateView):
         context['menu'] = user_menu
         context['title'] = 'О нас'
         return context
+
+class FavoriteLiist(DataMixin, ListView):
+    model = Item
+    template_name = 'shop/favorite_list.html'
+    context_object_name = 'favor_list'
+
+    def get(self, request, *args, **kwargs):
+        # Получение значения из сессии
+        self.favorites = request.session.get('favorites', [])
+        return super().get(request, *args, **kwargs)
+    
+    def get_context_data(self, *, object_list=None, **kwargs):
+        # ids = [item['id'] for item in self.favorites]
+        # items = [item for item in Item.objects.all() if item.id in ids ]
+        cont = super().get_context_data(**kwargs)
+        # cont['items'] = items
+        c_def = self.get_user_context(title="Избранные товары")
+        return {**cont, **c_def}
+
+    def get_queryset(self):
+        ids = [item['id'] for item in self.favorites]
+        # items = [item for item in Item.objects.all() if item.id in ids]
+        items = Item.objects.filter(id__in=ids)
+        return items
 
 def contact(request):
     return HttpResponse('<h1>contact</h1>')
