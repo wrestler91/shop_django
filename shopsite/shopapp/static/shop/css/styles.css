@@ -485,3 +485,9 @@ ul.lang-list li a:hover {color: #fdc073;}
 		flex: 0 0 50%;
 		}
 	}
+.valute-bar {
+	background:linear-gradient(to bottom, #b3e7f2, #e6e6e6);
+	margin-top: 10px;
+	padding: 5px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

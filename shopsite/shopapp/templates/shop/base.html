@@ -66,6 +66,12 @@
 		<p>Наш канал</p>
 		<a class="share-yt" href="https://www.youtube.com/" target="_blank" rel="nofollow"></a>
 		</li>
+        {% if usd %}
+            <div class="valute-bar">
+                <p>Курс доллара: {{ usd }}</p>
+                <p>Курс евро: {{ eur }}</p>
+            </div>
+        {% endif %}
 	</ul>
 </td>
 
