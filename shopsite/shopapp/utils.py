@@ -11,6 +11,9 @@ menu = [{'title': "О сайте", 'url_name': 'about'},
 API_NASDAQ = '_RQPjdq7WzFumRdf1Tjw'
 
 # def get_currency_rate(api_key):
+#     '''
+#     Функция получающая текущий курс рубля по api
+#     '''
 #     url = 'https://api.nasdaq.com/api/forex/rates'
 #     headers = {
 #         'Authorization': f'Bearer {api_key}',
@@ -30,6 +33,10 @@ API_NASDAQ = '_RQPjdq7WzFumRdf1Tjw'
 
 
 class DataMixin:
+    '''
+    Миксин для представлений.
+    Добавляет в контекст главное и боковое меню сайта
+    '''
     paginate_by = 5
 
     def get_user_context(self, **kwargs):
@@ -44,7 +51,6 @@ class DataMixin:
  
         context['menu'] = user_menu
         context['categories'] = categories
-        
 
         if 'cat_selected' not in context:
             context['cat_selected'] = 0
@@ -52,10 +58,16 @@ class DataMixin:
     
 
 class MultipleFileInput(forms.ClearableFileInput):
+    '''
+    Класс для реализации добавления нескольких фото одним полем. На данный момент не используется
+    '''
     allow_multiple_selected = True
 
 
 class MultipleFileField(forms.FileField):
+    '''
+    Класс для реализации добавления нескольких фото одним полем. На данный момент не используется
+    '''
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("widget", MultipleFileInput())
         super().__init__(*args, **kwargs)

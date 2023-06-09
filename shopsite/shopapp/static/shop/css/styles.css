@@ -19,7 +19,7 @@ a:hover {
 img {max-width: 600px; height: auto;}
 
 img.img-article-left {
-	max-width: 300px;
+	max-width: 220px;
 	height: auto;
 	float: left;
 	padding: 0 10px 10px 0;
@@ -39,6 +39,26 @@ p.link-read-post a {
 	background: #333671;
 	color: #fff;
 	text-decoration: none;
+}
+p.link-show-favor a {
+	/* margin-top: 5px; */
+	padding: 10px;
+	max-width: 100px;
+	max-height: 100px;
+	background: #e42424;
+	/* background-image: url('../images/Heart.png'); */
+	/* background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat; */
+	color: #fff;
+	text-decoration: none;
+	text-align: left;
+	border-radius: 50%;
+
+}
+
+.link-show-favor:hover {
+	color: #545353;
 }
 
 div.article-panel {
@@ -420,11 +440,48 @@ ul.lang-list li a:hover {color: #fdc073;}
 .list-pages .page-num:hover {
 	box-shadow: 3px 3px 1px #d0d0d0; 
 }
-/* .list-pages .page-num-selected {
-	border: none;
-	color: #000;
-	font-size: 20px;
-} */
+
 .list-pages .page-num-selected:hover {
 	box-shadow: none; 
 }
+
+.favor {
+	min-width: 100px;
+    font-size: 16px;
+	cursor: pointer;
+	border-radius: 3px;
+}
+
+.favor.add {
+	color: #141313;
+	background-color: #aaa;
+
+}
+.favor.del {
+	color: #f0f2f8;
+	background-color: #f30b0b;
+}
+
+.favor:hover {
+	background-color: #f30b0b;
+	outline: 2px solid blue;
+}
+
+
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	margin: -10px;
+  }
+  
+.col {
+	flex: 0 0 25%;
+	padding: 10px;
+	box-sizing: border-box;
+	}
+
+@media (max-width: 767px) {
+	.col {
+		flex: 0 0 50%;
+		}
+	}

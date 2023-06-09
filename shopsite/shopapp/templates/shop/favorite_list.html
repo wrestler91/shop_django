@@ -9,11 +9,11 @@
             <p><img class="img-article-left thumb" src="{{ item.photos.first.photo.url }}" alt="photo"></p>
         {% endif %}
         <p>Размеры: {{item.size}}</p>
-        
+        <p>Цена: {{item.price}} $</p>
         <form action="{% url 'favorites:remove' id=item.id %}" method="POST"> {% csrf_token %}
             <input type="hidden" name="id" value="{{ item.id }}">
             <input type="hidden" name="url_from" value="{{ request.path }}">
-            <button type="submit" class="link-read-post">Удалить из избранного</button>
+            <button type="submit" class="favor del">Удалить из избранного</button>
         </form>
         <div class="clear"></div>
             <p class="link-read-post"><a href="{{ item.get_absolute_url }}">Подробнее</a></p>

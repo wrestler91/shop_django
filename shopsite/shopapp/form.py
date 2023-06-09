@@ -8,6 +8,9 @@ from django.contrib.auth.forms import PasswordChangeForm
 from captcha.fields import CaptchaField
 
 class RequestItemForm(forms.ModelForm):
+    '''
+    Форма для запроса товара обычным пользователем
+    '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['categ'].empty_label = "Категория не выбрана"
@@ -23,9 +26,11 @@ class RequestItemForm(forms.ModelForm):
 
 
 
-# прописать форму добавления товара для администратора и работников.
-# форма для товара
+
 class AddItemForm(forms.ModelForm):
+    '''
+    Форма для добавления товара пользователями со статусами администратор и работник
+    '''
     class Meta:
         model = Item
         fields = ['title', 'description', 'size', 'price', 'count', 'discount', 'categ', 'slug']
@@ -36,7 +41,10 @@ class AddItemForm(forms.ModelForm):
 
 # форма для фото товара
 class AddPhotoForm(forms.Form):
-    # photos = MultipleFileField(label ='Фотографии')
+    '''
+    Форма для добавления нескольких фото черех одно поле
+    Реализованно при помощи модуля  multiupload-django
+    '''
     photos = MultiImageField(min_num=1, max_num=5, label ='Фотографии')
 
     # def __init__(self, *args, **kwargs):
@@ -77,6 +85,9 @@ class AddPhotoForm(forms.Form):
         #     ItemPhoto(photo=photo, item=item).save()
 
 class RegisterUserForm(UserCreationForm):
+    '''
+    Форма регистрации пользователя
+    '''
     first_name = forms.CharField(label='Имя', widget=forms.TextInput(attrs={'class': 'form-input'}))
     username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
     password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
@@ -88,15 +99,24 @@ class RegisterUserForm(UserCreationForm):
         fields = ('first_name', 'username', 'password1', 'password2', 'email')
 
 class LoginUserForm(AuthenticationForm):
+    '''
+    Форма авторизации
+    '''
     username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': 'form-input'}))
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
 
 class ProfileEditForm(UserChangeForm):
+    '''
+    Форма редактирования профиля
+    '''
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username', 'email']
 
 class ChangePasswordForm(PasswordChangeForm):
+    '''
+    Форма для изменения пароля
+    '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['old_password'].widget = forms.PasswordInput(attrs={'class': 'form-input', 'label': 'Старый пароль'})

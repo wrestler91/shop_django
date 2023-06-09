@@ -11,10 +11,14 @@ from .utils import *
 from .form import *
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordChangeView
-from django.db.models import OuterRef, Subquery, ImageField, Case, When
+
 
 
 class Home(DataMixin, ListView):
+    '''
+    Главная страница. 
+    Отображает список последних поступлений 
+    '''
     model = Item
     template_name = 'shop/index.html'
     context_object_name = 'items'
@@ -25,12 +29,15 @@ class Home(DataMixin, ListView):
         return {**cont, **c_def}
     
     def get_queryset(self):
-        # здесь прописать фильтр который будет выводит  товары добавленные за последний месяц
+        # фильтр который выводит товары добавленные за последний месяц
         last_month = datetime.now() - timedelta(days=30)
         return Item.objects.filter(time_update__gte=last_month).prefetch_related('photos').select_related('categ')
         
 
 class Categories(DataMixin, ListView):
+    '''
+    Выводит список товаров по категориям.
+    '''
     model = Item
     template_name = 'shop/categories.html'
     context_object_name = 'items'
@@ -55,6 +62,9 @@ class Categories(DataMixin, ListView):
         # return queryset
     
 class ShowItem(DataMixin, DetailView):
+    '''
+    Детальное представление товара
+    '''
     model = Item
     template_name = 'shop/item.html'
     context_object_name = 'item'
@@ -86,6 +96,10 @@ class ShowItem(DataMixin, DetailView):
 # представление формы для запроса пользователем некоторого товара
 # доработать представление 
 class RequestItem(LoginRequiredMixin, DataMixin, CreateView):
+    '''
+    Представление формы для запроса товара обычным пользователем. 
+    Связан с отдельной моделью
+    '''
     form_class = RequestItemForm
     template_name = 'shop/request.html'
     raise_exception = True
@@ -96,43 +110,48 @@ class RequestItem(LoginRequiredMixin, DataMixin, CreateView):
         return {**cont, **c_def}
 
 class AddItem(DataMixin, CreateView):
+    '''
+    Представления формы для добавления товара на сайт пользователем с правами администратора или работника
+    '''
     template_name = 'shop/additem.html'
     form_class = AddItemForm
     form_photos_class = AddPhotoForm
     model = Item
     raise_exception = True
-    # success_url = reverse_lazy('home')
 
-    def get(self, request):
-        form = self.form_class()
-        form_photos = self.form_photos_class()
-        return render(request, self.template_name, {'form': form, 'form_photos': form_photos})
+    # def get(self, request):
+    #     '''
+    #     переопределяем метод гет для передачи двух форм в контекст
+    #     '''
+    #     form = self.form_class()
+    #     form_photos = self.form_photos_class()
+    #     return render(request, self.template_name, {'form': form, 'form_photos': form_photos})
     
     def post(self, request):
-    
-        # print('From AddItem (view)', request.FILES)
+        '''
+        Переопределяем метод пост для сохранения полученных данных в соответсвующие ДБ
+        '''
         form = self.form_class(request.POST)
-        # form_photos = self.form_photos_class(request.POST, request.FILES, request=request)
         form_photos = self.form_photos_class(request.POST, request.FILES)
         # if form.is_valid() and form_photos.is_valid():
         if form.is_valid():
-            
-            # form.save()
-            # form_photos.save()
             item = form.save()
-            # form_photos.save_for(item)
             for photo in self.request.FILES.getlist('photos'):
                 ItemPhoto(photo=photo, item=item).save()
-            # form_photos.save_for(photos=self.request.FILES.getlist('photos'), item=item)
             return HttpResponseRedirect('/')
         return render(request, self.template_name, {'form': form, 'form_photos': form_photos})
 
     def get_context_data(self, **kwargs) -> dict:
         cont = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title='Добавление товара')
+        cont['form'] = self.form_class
+        cont['form_photos'] = self.form_photos_class
         return {**cont, **c_def}
 
 class RegisterUser(DataMixin, CreateView):
+    '''
+    Представление формы регистрации пользователя
+    '''
     form_class = RegisterUserForm
     template_name = 'shop/register.html'
     success_url = reverse_lazy('login')
@@ -155,6 +174,9 @@ class RegisterUser(DataMixin, CreateView):
     
 
 class LoginUser(DataMixin, LoginView):
+    '''
+    Представление формы авторизации пользователя
+    '''
     form_class = LoginUserForm
     template_name = 'shop/login.html'
  
@@ -188,6 +210,9 @@ class ProfileEditView(DataMixin, LoginRequiredMixin, UpdateView):
         return reverse_lazy('profile')
 
 def logout_user(request):
+    '''
+    Представлени для разлогирования пользователя на основе базовой функции джанго
+    '''
     logout(request)
     return redirect('login')
 
@@ -227,7 +252,9 @@ class ChangePasswordView(DataMixin, LoginRequiredMixin, PasswordChangeView):
 
 
 class AboutView(TemplateView):
-    
+    '''
+    Страничка о нас.
+    '''
     template_name = 'shop/about.html'
     
     menu = [
@@ -242,6 +269,10 @@ class AboutView(TemplateView):
         return context
 
 class FavoriteLiist(DataMixin, ListView):
+    '''
+    Выводит список товаров добавленных в избранное.
+    Список реализован через Сессию и отдельное приложение
+    '''
     model = Item
     template_name = 'shop/favorite_list.html'
     context_object_name = 'favor_list'
@@ -252,23 +283,29 @@ class FavoriteLiist(DataMixin, ListView):
         return super().get(request, *args, **kwargs)
     
     def get_context_data(self, *, object_list=None, **kwargs):
-        # ids = [item['id'] for item in self.favorites]
-        # items = [item for item in Item.objects.all() if item.id in ids ]
         cont = super().get_context_data(**kwargs)
-        # cont['items'] = items
         c_def = self.get_user_context(title="Избранные товары")
         return {**cont, **c_def}
 
     def get_queryset(self):
+        '''
+        получаем список избранного по id товара
+        '''
         ids = [item['id'] for item in self.favorites]
-        # items = [item for item in Item.objects.all() if item.id in ids]
         items = Item.objects.filter(id__in=ids)
         return items
 
 def contact(request):
+    '''
+    Представление контактов. Будет дорабатываться. Планирую прикрутить туда ссылку на телеграмм бот. 
+    Возможно сделаю форму обратной связи с привязкой к почте
+    '''
     return HttpResponse('<h1>contact</h1>')
 
 
 
 def pageNotFound(request, exception):
+    '''
+    функция для обработки исключения отсутсвия страницы"
+    '''
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')

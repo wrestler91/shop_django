@@ -4,8 +4,11 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 
 # Create your models here.
-# добавить функционал обавления товара в избранное
+
 class Item(models.Model):
+    '''
+    Основная модель для товаров сайта
+    '''
     title = models.CharField(max_length=300, verbose_name='Наименование')
     description = models.TextField(verbose_name='Описание')
     size = models.CharField(max_length=50, verbose_name='Размер')
@@ -15,10 +18,7 @@ class Item(models.Model):
     available = models.BooleanField(default=True, verbose_name='Наличие')
     time_update = models.DateTimeField(auto_now=True, verbose_name='Время последнего обновления')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
-    categ = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория', related_name='categ')
-    
-
-    
+    categ = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория', related_name='categ')    
 
     class Meta:
         verbose_name = 'Товар'
@@ -32,6 +32,9 @@ class Item(models.Model):
 
 
 class Category(models.Model):
+    '''
+    Модель для категорий товаров
+    '''
     name = models.CharField(max_length=255, db_index=True, unique=True, verbose_name='Название')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name='URL')
 
@@ -45,11 +48,12 @@ class Category(models.Model):
     def get_absolute_url(self):
         return reverse('category', kwargs={'categ_slug': self.slug})
 
-# необходимо создать связь этого представления и товара
-# в шаблонах поменять ссылку на фото (сейчас там ссылка на атрибут класса Item)
+
 class ItemPhoto(models.Model):
+    '''
+    Отдельная модель для реализации загрузки нескольких фото через одно поле
+    '''
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото')
-    # photo2 = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Фото 2')
     item = models.ForeignKey(Item, on_delete=models.CASCADE, verbose_name='Товар', related_name='photos', db_index=True)
     # related_name='photos' используется для обращения к этому полю через класс Item (for photo in item.photos)
     class Meta:
@@ -63,8 +67,10 @@ class ItemPhoto(models.Model):
         return reverse('photo', kwargs={'photo_pk': self.pk})
 
 # представление для формы запроса товара
-# необходимо привязать форму к пользователю
 class RequestedItem(models.Model):
+    '''
+    Модель для товаров запрошенных обычными пользователями
+    '''
     title = models.CharField(max_length=300, verbose_name='Наименование')
     comments = models.TextField(verbose_name='Комментарии', blank=True)
     size = models.CharField(max_length=50, verbose_name='Размер')

@@ -2,11 +2,19 @@
 
 {% block content %}
 <h1>{{item.title}}</h1>
-{% if item.photos.all %}
-    {% for photo in item.photos.all %}
-        <p><img class="img-article-left thumb" src="{{ photo.photo.url }}" alt="photo"></p>
-    {% endfor %}
-{% endif %}
+{% for photo in item.photos.all %}
+    {% if forloop.counter0|divisibleby:3 %}
+        <div class="row">
+    {% endif %}
+
+    <div class="col">
+        <img class="img-article-left" src="{{ photo.photo.url }}" alt="photo">
+    </div>
+
+    {% if forloop.counter|divisibleby:3 or forloop.last %}
+        </div>
+    {% endif %}
+{% endfor %}
 
 
 <p>Размеры: {{item.size}}</p>
@@ -32,14 +40,14 @@
         <!-- сркытно передаем id товара и путь откуда был добавлен товар -->
         <input type="hidden" name="id" value="{{ item.id }}">
         <input type="hidden" name="url_from" value="{{ request.path }}">
-        <button type="submit" class="link-read-post">Добавить в избранное</button>
+        <button type="submit" class="favor add">Добавить в избранное</button>
     </form>
 <!-- если товар уже добавлен в избранное, то отображаем кнопку удаления из избранного -->
     {% else %}
     <form action="{% url 'favorites:remove' id=item.id %}" method="POST"> {% csrf_token %}
         <input type="hidden" name="id" value="{{ item.id }}">
         <input type="hidden" name="url_from" value="{{ request.path }}">
-        <button type="submit" class="link-read-post">Удалить из избранного</button>
+        <button type="submit" class="favor del">Удалить из избранного</button>
     </form>
     {% endif %}
 
