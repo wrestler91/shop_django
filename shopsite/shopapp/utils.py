@@ -77,7 +77,6 @@ def get_currency_cacher(func):
             return cache
 
 
-
 class DataMixin:
     '''
     Миксин для представлений.
