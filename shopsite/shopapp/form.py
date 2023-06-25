@@ -33,9 +33,10 @@ class AddItemForm(forms.ModelForm):
     '''
     class Meta:
         model = Item
-        fields = ['title', 'description', 'size', 'price', 'count', 'discount', 'categ', 'slug']
+        fields = ['title', 'brand', 'description', 'size', 'price', 'count', 'discount', 'categ', 'slug']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input'}),
+            'brand': forms.TextInput(attrs={'class': 'form-input'}),
             'comments': forms.Textarea(attrs={'cols': 60, 'rows': 10}),
         }
 

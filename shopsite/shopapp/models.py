@@ -11,11 +11,12 @@ class Item(models.Model):
     '''
     title = models.CharField(max_length=300, verbose_name='Наименование')
     description = models.TextField(verbose_name='Описание')
-    size = models.CharField(max_length=50, verbose_name='Размер')
+    size = models.CharField(max_length=200, verbose_name='Размер')
     price = models.FloatField(validators = [validators.MinValueValidator(0)], default=0, verbose_name='Цена')
     count = models.IntegerField(validators = [validators.MinValueValidator(0)], default=1, verbose_name='Количество')
     discount = models.FloatField(validators= [validators.MinValueValidator(0)], default=0, verbose_name='Скидка')
     available = models.BooleanField(default=True, verbose_name='Наличие')
+    brand = models.CharField(max_length=200, verbose_name='Бренд')
     time_update = models.DateTimeField(auto_now=True, verbose_name='Время последнего обновления')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
     categ = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория', related_name='categ')    
