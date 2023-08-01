@@ -5,7 +5,7 @@ import requests
 import json
 import time
 from functools import wraps
-
+from rest_framework.pagination import PageNumberPagination
 
 menu = [{'title': "О сайте", 'url_name': 'about'},
         # {'title': "Обратная связь", 'url_name': 'contact'},
@@ -139,3 +139,7 @@ class MultipleFileField(forms.FileField):
 
 
 
+class ItemAPIListPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 10000

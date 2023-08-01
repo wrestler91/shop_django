@@ -5,12 +5,18 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.views.generic.edit import UpdateView
 from django.contrib.auth import login, logout
-from .models import *
 from datetime import datetime, timedelta
-from .utils import *
-from .form import *
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordChangeView
+
+from .models import *
+from .utils import ItemAPIListPagination, DataMixin, menu
+from .form import *
+
+from rest_framework import viewsets
+from .serializers import *
+from .permissions import IsAdminOrReadOnly
+
 
 
 
@@ -209,12 +215,16 @@ class ProfileEditView(DataMixin, LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('profile')
 
+
+
 def logout_user(request):
     '''
     Представлени для разлогирования пользователя на основе базовой функции джанго
     '''
     logout(request)
     return redirect('login')
+
+
 
 class ProfileView(DataMixin, LoginRequiredMixin, DetailView):
     '''
@@ -309,3 +319,27 @@ def pageNotFound(request, exception):
     функция для обработки исключения отсутсвия страницы"
     '''
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
+
+
+
+
+################################################# API VIEWS #################################################
+
+class ItemAPIViewSet(viewsets.ModelViewSet):
+    queryset = Item.objects.all().order_by('id')
+    serializer_class = ItemSerializer
+    permission_classes = (IsAdminOrReadOnly, )
+    pagination_class = ItemAPIListPagination
+
+
+
+class RequestedItemApiViewSet(viewsets.ModelViewSet):
+    queryset = RequestedItem.objects.all().order_by('time_update')
+    serializer_class = RequestedItemSerializer
+    pagination_class = ItemAPIListPagination
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return RequestedItem.objects.filter(user=self.request.user).order_by('time_update')
+        else:
+            return RequestedItem.objects.none()

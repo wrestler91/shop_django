@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     
     'favorites.apps.FavoritesConfig',
     'debug_toolbar',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

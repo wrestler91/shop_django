@@ -52,7 +52,7 @@ def remove_from_favorites(request, id):
             if item['id'] == id:
                 item.clear()
 
-    # очищаемизбранное от пустых эллементов
+    # очищаем избранное от пустых эллементов
     while {} in request.session['favorites']:
         request.session['favorites'].remove({})
         request.session.modified = True

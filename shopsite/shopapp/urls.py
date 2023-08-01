@@ -1,6 +1,8 @@
-from django.urls import path
+from django.urls import path, include
 from .views import *
 from django.views.decorators.cache import cache_page
+from .router import router
+
 
 # добавить адреса для представлений форм 
 urlpatterns = [
@@ -19,6 +21,10 @@ urlpatterns = [
     path('password/', ChangePasswordView.as_view(), name='password'),
     path('about/', cache_page(6000)(AboutView.as_view()), name='about'),
     path('favorite_list/', FavoriteLiist.as_view(), name='favor_list'),
+    path('api/v1/drf-auth/', include('rest_framework.urls')),
+    path('api/v1/', include(router.urls)),
+
+
 ]
 
 
